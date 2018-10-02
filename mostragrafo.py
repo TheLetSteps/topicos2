@@ -80,15 +80,15 @@ class App(QMainWindow):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
-        nodeAct = QAction(QIcon('Images/icon.png'), 'Criar vertice', self)
+        nodeAct = QAction(QIcon('Images/vertex.jpeg'), 'Criar vertice', self)
         nodeAct.triggered.connect(self.create_vertex_toolbar)
         nodeAct.setEnabled(True)
 
-        edgeAct = QAction(QIcon('Images/edge.png'), 'Criar aresta', self)
+        edgeAct = QAction(QIcon('Images/line.jpeg'), 'Criar aresta', self)
         edgeAct.setEnabled(True)
         edgeAct.triggered.connect(self.create_edge_toolbar)
 
-        self.routeAct = QAction(QIcon('Images/route.png'), 'Calcular rotas', self)
+        self.routeAct = QAction(QIcon('Images/route.jpeg'), 'Calcular rotas', self)
         self.routeAct.setEnabled(True)
         self.routeAct.triggered.connect(self.showSimulatorDialog)
 
@@ -122,7 +122,7 @@ class App(QMainWindow):
 
     def create_edge_toolbar(self, event):
         if (len(self.used_icon_vertexes) < 2):
-            self.showNewMessageDialog('Não é possível criar! Qtd de vértices é menor que dois.')
+            self.showNewMessageDialog('Não é possível criar! Quantidade de vértices é menor que dois.')
         else:
             idVertexList = []
             labelVertexList = []
@@ -158,8 +158,21 @@ class App(QMainWindow):
         v.initialize(x, y, label, idVertex)
         self.createdNodes += 1
 
-    def create_vertex_toolbar(self,  event):
-        self.create_vertex(100,100, 'Untitled', self.createdNodes)
+    def create_vertex_toolbar(self, event):
+        aux = self.createVertexDialog(self.createdNodes)
+        if(aux[0]==0):
+            self.create_vertex(100,100,aux[1],self.createdNodes)
+
+
+    def createVertexDialog(self, idField=None):
+        self.dialog = QVertex.VertexDialog(idField)
+        self.dialog.exec_()
+        l = []
+        l.append(self.dialog.status)
+        l.append(self.dialog.label.text())
+        l.append(self.dialog.idField.text())
+        
+        return(l)
 
     def load_topology(self, fileName):
         file = open(fileName,'r')
