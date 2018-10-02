@@ -8,6 +8,8 @@ from PyQt5.QtGui import QIcon, QPainter, QPen
 from PyQt5.QtCore import Qt
 from enum import Enum
 from QGraph import QEdge, QVertex
+from Graph import Simulator
+
 try:
   from enum import auto
 except ImportError: 
@@ -42,8 +44,8 @@ class App(QMainWindow):
         self.title = 'Grafo'
         self.left = 100
         self.top = 100
-        self.width = 800
-        self.height = 500
+        self.width = 1800
+        self.height = 1200
         self.v = 0
         self.init_interface()
         
@@ -86,12 +88,22 @@ class App(QMainWindow):
         edgeAct.setEnabled(True)
         edgeAct.triggered.connect(self.create_edge_toolbar)
 
+        self.routeAct = QAction(QIcon('Images/route.png'), 'Calcular rotas', self)
+        self.routeAct.setEnabled(True)
+        self.routeAct.triggered.connect(self.showSimulatorDialog)
+
         self.toolbar = self.addToolBar('Exit')
         self.toolbar.addAction(nodeAct)
         self.toolbar.addAction(edgeAct)
+        self.toolbar.addAction(self.routeAct)
+
 
         self.show()
 
+
+    def showSimulatorDialog(self):
+        self.dialog = Simulator.SimulatorDialog(self, len(self.used_icon_vertexes), self.used_label_edges)
+        self.dialog.exec_()
 
     def create_edge(self, u, v, w):
         vertex_u = None
