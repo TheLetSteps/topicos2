@@ -7,12 +7,12 @@ class VertexDialog(QDialog):
     NumGridRows = 3
     NumButtons = 4
 
-    def __init__(self, clickPos, textIdField):
+    def __init__(self,textIdField):
         super(VertexDialog, self).__init__()
         self.status = -1
         self.textIdField = textIdField
         self.createFormGroupBox()
-        self.move(clickPos)
+        #self.move(clickPos)
 
         self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         self.buttonBox.accepted.connect(self.acceptAct)
@@ -23,18 +23,18 @@ class VertexDialog(QDialog):
         mainLayout.addWidget(self.buttonBox)
         self.setLayout(mainLayout)
 
-        self.setWindowTitle("Vertice Setup")
+        self.setWindowTitle("Criar Vértice")
 
     def createFormGroupBox(self):
-        self.formGroupBox = QGroupBox("Vertice Setup")
+        self.formGroupBox = QGroupBox("Criar Vértice")
         layout = QFormLayout()
         # teremos que gerar esses ids
         self.label = QLineEdit()
         self.idField = QLineEdit(str(self.textIdField))
         self.idField.setReadOnly(True)
 
-        layout.addRow(QLabel("Id"), self.idField)
-        layout.addRow(QLabel("Label"), self.label)
+        layout.addRow(QLabel("ID"), self.idField)
+        layout.addRow(QLabel("Nome"), self.label)
         self.formGroupBox.setLayout(layout)
 
     def acceptAct(self):
@@ -119,7 +119,7 @@ class VertexIcon(QLabel):
     def initialize(self, x, y, label, idVertex):
         self.idVertex = idVertex
         self.move(x, y)
-        self.setPixmap(QtGui.QPixmap('Images/icon.png'))
+        self.setPixmap(QtGui.QPixmap('Images/server.png'))
         self.setGeometry(QtCore.QRect(x, y, 50, 50))
         self.label.initialize(self, label)
         self.show()
