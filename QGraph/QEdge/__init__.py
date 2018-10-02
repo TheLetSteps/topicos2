@@ -22,7 +22,7 @@ class EdgeDialog(QDialog):
         mainLayout.addWidget(self.buttonBox)
         self.setLayout(mainLayout)
 
-        self.setWindowTitle("Edge")
+        self.setWindowTitle("Aresta")
 
     def createFormGroupBox(self):
         self.formGroupBox = QGroupBox("Edge Setup")
@@ -133,7 +133,7 @@ class CreateEdgeDialog(QDialog):
         self.setWindowTitle("Edge")
 
     def createFormGroupBox(self):
-        self.formGroupBox = QGroupBox("New Edge")
+        self.formGroupBox = QGroupBox("Nova Aresta")
         
         layout = QFormLayout()
         self.u = QComboBox()
@@ -143,9 +143,9 @@ class CreateEdgeDialog(QDialog):
         self.label = QLineEdit()
         self.label.setText('10')
         
-        layout.addRow(QLabel('From'), self.u)
-        layout.addRow(QLabel('To'), self.v)
-        layout.addRow(QLabel("Distance"), self.label)
+        layout.addRow(QLabel('De'), self.u)
+        layout.addRow(QLabel('Para'), self.v)
+        layout.addRow(QLabel("Distância"), self.label)
         
         self.formGroupBox.setLayout(layout)
 
