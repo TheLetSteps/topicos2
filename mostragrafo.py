@@ -150,7 +150,7 @@ class App(QMainWindow):
                     if (existentEdge):
                         self.showNewMessageDialog('Não é possível criar aresta. Aresta já existe.')
                     else:
-                        self.createEdge(str(u), str(v), self.dialog.label.text())
+                        self.create_edge(str(u), str(v), self.dialog.label.text())
 
     def create_vertex(self, x, y, label, idVertex):
         v = self.unused_icon_vertexes.pop()
@@ -199,6 +199,44 @@ class App(QMainWindow):
 
     def importFile(self):
 	    self.open_file_name_dialog()
+
+    def showNewMessageDialog(self, mensagem):
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+
+        msg.setText(mensagem)
+        msg.setWindowTitle("Simulador Djikstra")
+        msg.setStandardButtons(QMessageBox.Ok)
+        
+        msg.exec_()
+
+    def paintEvent(self, e):
+        qp = QPainter()
+        qp.begin(self)
+        
+        self.drawEdges(qp)
+        
+        if(self.SourceEdgeDrawingVertex is not None):
+            self.drawEdgeFollower(qp)
+        qp.end()
+
+        
+    def drawEdgeFollower(self, qp):
+        pen = QPen(Qt.black, 2, Qt.SolidLine)
+        pen.setStyle(Qt.SolidLine)
+        qp.setPen(pen)
+        qp.drawLine(self.SourceEdgeDrawingVertex.vertexCenter, self.mouseTrackingPosition)
+        self.update()
+        
+    def drawEdges(self, qp):
+        pen = QPen(Qt.black, 2, Qt.SolidLine)
+        pen.setStyle(Qt.SolidLine)
+        qp.setPen(pen)
+        
+        for edge in self.used_label_edges:
+            qp.drawLine(edge.u.vertexCenter, edge.v.vertexCenter)
+            edge.updateCenterPosition()
+            self.update()
 
 
 if __name__ == '__main__':
