@@ -9,6 +9,7 @@ from PyQt5.QtCore import Qt
 from enum import Enum
 from QGraph import QEdge, QVertex
 from Graph import Simulator
+import random
 
 try:
   from enum import auto
@@ -44,8 +45,8 @@ class App(QMainWindow):
         self.title = 'Grafo'
         self.left = 100
         self.top = 100
-        self.width = 1800
-        self.height = 1200
+        self.width = 1500
+        self.height = 1100
         self.v = 0
         self.init_interface()
         
@@ -161,7 +162,7 @@ class App(QMainWindow):
     def create_vertex_toolbar(self, event):
         aux = self.createVertexDialog(self.createdNodes)
         if(aux[0]==0):
-            self.create_vertex(100,100,aux[1],self.createdNodes)
+            self.create_vertex(random.randint(0,self.width),random.randint(0,self.height),aux[1],self.createdNodes)
 
 
     def createVertexDialog(self, idField=None):
@@ -216,17 +217,18 @@ class App(QMainWindow):
         
         self.drawEdges(qp)
         
-        if(self.SourceEdgeDrawingVertex is not None):
-            self.drawEdgeFollower(qp)
+        #if(self.SourceEdgeDrawingVertex is not None):
+        #    self.drawEdgeFollower(qp)
         qp.end()
 
-        
+    '''
     def drawEdgeFollower(self, qp):
         pen = QPen(Qt.black, 2, Qt.SolidLine)
         pen.setStyle(Qt.SolidLine)
         qp.setPen(pen)
         qp.drawLine(self.SourceEdgeDrawingVertex.vertexCenter, self.mouseTrackingPosition)
         self.update()
+    '''
         
     def drawEdges(self, qp):
         pen = QPen(Qt.black, 2, Qt.SolidLine)
