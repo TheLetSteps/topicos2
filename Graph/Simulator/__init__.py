@@ -28,23 +28,19 @@ class SimulatorDialog(QDialog):
         mainLayout.addWidget(self.buttonBox)
         self.setLayout(mainLayout)
 
-        self.setWindowTitle("Simulator Setup")
+        self.setWindowTitle("Calcular Rota")
 
     def createFormGroupBox(self):
-        self.formGroupBox = QGroupBox("Simulator Setup")
+        self.formGroupBox = QGroupBox("Calcular Rota")
         layout = QFormLayout()
         # teremos que gerar esses ids
         self.countSimulationsField = QLineEdit()
         self.countSimulationsField.setValidator(QIntValidator(1, 10001))
         
-        self.b1 = QCheckBox("Djikstra")
-        self.b2 = QCheckBox("First-Fit")
+        self.b1 = QCheckBox("Você tem certeza que deseja calcular?")
         self.b1.setChecked(True)
-        self.b2.setChecked(True)
         
         layout.addRow(self.b1)
-        layout.addRow(self.b2)
-        layout.addRow(QLabel("Number of calls"), self.countSimulationsField)
         
         self.formGroupBox.setLayout(layout)
         
@@ -180,8 +176,7 @@ class SimulatorDialog(QDialog):
         
     def acceptAct(self):
         self.accept()
-        if(self.b1.isChecked()):
-            self.simulate(self.b2.isChecked())
+        self.simulate(self.b1.isChecked())
         self.close()
         
         
