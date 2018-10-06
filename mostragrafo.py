@@ -33,7 +33,6 @@ class App(QMainWindow):
         EDITING = auto()    
     
     MAX_VERTEXES = 100
-    count_id = 0
  
     def __init__(self):
         super().__init__()
@@ -141,7 +140,6 @@ class App(QMainWindow):
             if self.dialog.status == 0:
                 u = idVertexList[self.dialog.u.currentIndex()]
                 v = idVertexList[self.dialog.v.currentIndex()]
-                print(u, v)
                 if (u == v):
                     self.showNewMessageDialog('Não é possível criar aresta. Vértices iguais.')
                 else:
