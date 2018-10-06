@@ -180,18 +180,22 @@ class App(QMainWindow):
         return(l)
 
     def load_topology(self, fileName):
-        file = open(fileName,'r')
+        global hasImport
+        if not hasImport:
+            file = open(fileName,'r')
 
-        content = file.readlines()
-        print(content)
-        if content[0]!='0':
-            self.createdNodes = int(content[0])
-            for i in range (1,int(content[0]) + 1):
-                aux = []
-                aux = str(content[i]).rstrip().split(' ')
-                self.create_vertex(int(aux[0])*100, int(aux[1])*100, str(i), int(aux[2]))
-                self.create_edge(aux[0], aux[1], aux[2])
+            content = file.readlines()
+            nVertex, nEdges = content[0].rstrip().split()
 
+            for i in range(1,int(nVertex)+1):
+                self.create_vertex(random.randint(0,self.width)-100,random.randint(0,self.height)-100,str(i),str(i))
+
+            for j in range(1,int(nEdges)+1):
+                vertex,neighbor,weight = content[j].rstrip().split()
+                self.create_edge(vertex,neighbor,weight)
+
+            hasImport = True
+            self.createdNodes += 1
   
     def open_file_name_dialog(self):
         options = QFileDialog.Options()
@@ -200,17 +204,21 @@ class App(QMainWindow):
         if fileName:
             print(fileName)
             self.fileName = fileName
-            self.loadTopology(fileName)	
+            self.load_topology(fileName)	
 
     def importFile(self):
-	    self.open_file_name_dialog()
+        global hasImport
+        if not hasImport:
+            self.open_file_name_dialog()
+        else:
+            self.showNewMessageDialog('Já foi importado uma topologia')
 
     def showNewMessageDialog(self, mensagem):
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Information)
 
         msg.setText(mensagem)
-        msg.setWindowTitle("Simulador Djikstra")
+        msg.setWindowTitle("Simulador")
         msg.setStandardButtons(QMessageBox.Ok)
         
         msg.exec_()
