@@ -112,15 +112,15 @@ class App(QMainWindow):
     def create_edge(self, u, v, w):
         vertex_u = None
         vertex_v = None
-        print(u, v)
         e = self.unused_label_edges.pop()
+
         for vertex in self.used_icon_vertexes:
-            if vertex.idVertex==int(u):
+            if vertex.idVertex==u:
                 vertex_u = vertex
-            elif vertex.idVertex==int(v):
+            elif vertex.idVertex==v:
                 vertex_v = vertex
-            e.initialize(vertex_u, vertex_v, ast.literal_eval(w))
-            self.used_label_edges.add(e)   
+        e.initialize(vertex_u, vertex_v, ast.literal_eval(w))
+        self.used_label_edges.add(e)
 
 
 
@@ -153,7 +153,7 @@ class App(QMainWindow):
                     if (existentEdge):
                         self.showNewMessageDialog('Não é possível criar aresta. Aresta já existe.')
                     else:
-                        self.create_edge(str(u), str(v), self.dialog.label.text())
+                        self.create_edge(u, v, self.dialog.label.text())
 
     def create_vertex(self, x, y, label, idVertex):
         v = self.unused_icon_vertexes.pop()
