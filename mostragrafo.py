@@ -21,6 +21,9 @@ except ImportError:
     __my_enum_auto_id += 1
     return i
 
+global hasImport
+hasImport = False
+
 
 class App(QMainWindow):
     
