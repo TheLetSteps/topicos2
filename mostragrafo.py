@@ -81,6 +81,9 @@ class App(QMainWindow):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
+        importAct = QAction(QIcon('Images/import.png'),'&Import', self)
+        importAct.triggered.connect(self.importFile)
+
         nodeAct = QAction(QIcon('Images/vertex.jpeg'), 'Criar vertice', self)
         nodeAct.triggered.connect(self.create_vertex_toolbar)
         nodeAct.setEnabled(True)
@@ -94,6 +97,7 @@ class App(QMainWindow):
         self.routeAct.triggered.connect(self.showSimulatorDialog)
 
         self.toolbar = self.addToolBar('Exit')
+        self.toolbar.addAction(importAct)
         self.toolbar.addAction(nodeAct)
         self.toolbar.addAction(edgeAct)
         self.toolbar.addAction(self.routeAct)
