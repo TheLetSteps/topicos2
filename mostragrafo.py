@@ -166,7 +166,7 @@ class App(QMainWindow):
     def create_vertex_toolbar(self, event):
         aux = self.createVertexDialog(self.createdNodes)
         if(aux[0]==0):
-            self.create_vertex(random.randint(0,self.width),random.randint(0,self.height),aux[1],self.createdNodes)
+            self.create_vertex(random.randint(0,self.width)-100,random.randint(0,self.height)-100,aux[1],self.createdNodes)
 
 
     def createVertexDialog(self, idField=None):
