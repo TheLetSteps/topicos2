@@ -94,7 +94,7 @@ class App(QMainWindow):
         edgeAct.setEnabled(True)
         edgeAct.triggered.connect(self.create_edge_toolbar)
 
-        self.routeAct = QAction(QIcon('Images/route.jpeg'), 'Calcular rotas', self)
+        self.routeAct = QAction(QIcon('Images/on.jpeg'), 'Solicitar Chamadas', self)
         self.routeAct.setEnabled(True)
         self.routeAct.triggered.connect(self.showSimulatorDialog)
 

@@ -28,19 +28,21 @@ class SimulatorDialog(QDialog):
         mainLayout.addWidget(self.buttonBox)
         self.setLayout(mainLayout)
 
-        self.setWindowTitle("Calcular Rota")
+        self.setWindowTitle("Solicitar Chamadas")
 
     def createFormGroupBox(self):
-        self.formGroupBox = QGroupBox("Calcular Rota")
+        self.formGroupBox = QGroupBox("Solicitar Chamadas")
         layout = QFormLayout()
-        # teremos que gerar esses ids
-        self.countSimulationsField = QLineEdit()
-        self.countSimulationsField.setValidator(QIntValidator(1, 10001))
         
-        self.b1 = QCheckBox("Você tem certeza que deseja calcular?")
-        self.b1.setChecked(True)
+        layout.addRow(QLabel("Nº de Chamadas:"), QLineEdit())
+
+        #self.countSimulationsField = QLineEdit()
+        #self.countSimulationsField.setValidator(QIntValidator(1, 10001))
         
-        layout.addRow(self.b1)
+        #self.b1 = QCheckBox("Você tem certeza que deseja calcular?")
+        #self.b1.setChecked(True)
+        
+        #layout.addRow(self.b1)
         
         self.formGroupBox.setLayout(layout)
         
