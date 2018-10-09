@@ -68,7 +68,7 @@ class App(QMainWindow):
         self.unused_label_edges = set()
         self.used_label_edges = set()
         
-        self.createdNodes = 0
+        self.createdNodes = 1
         self.lambda_ = 0
         self.fileName = None
         
@@ -93,6 +93,10 @@ class App(QMainWindow):
         edgeAct = QAction(QIcon('Images/line.jpeg'), 'Criar aresta', self)
         edgeAct.setEnabled(True)
         edgeAct.triggered.connect(self.create_edge_toolbar)
+	
+        saveAct = QAction(QIcon('Images/save2.png'), 'Download', self)
+        saveAct.setEnabled(True)
+        saveAct.triggered.connect(self.saveFile)
 
         self.routeAct = QAction(QIcon('Images/on.jpeg'), 'Solicitar Chamadas', self)
         self.routeAct.setEnabled(True)
@@ -103,9 +107,25 @@ class App(QMainWindow):
         self.toolbar.addAction(nodeAct)
         self.toolbar.addAction(edgeAct)
         self.toolbar.addAction(self.routeAct)
+        self.toolbar.addAction(saveAct)
+	
 
 
         self.show()
+
+    def mousePressEvent(self, event):
+        
+        if(event.button() == QtCore.Qt.RightButton
+           and self.app_state is App.AppState.DRAWING
+           and self.shouldExecuteRightClickAction):
+            self.onRightClick(event.pos(), event.globalPos())
+
+        
+        if(self.shouldExecuteRightClickAction and self.SourceEdgeDrawingVertex is not None):
+            self.SourceEdgeDrawingVertex = None
+            self.update()
+            
+        self.shouldExecuteRightClickAction = True
 
 
     def showSimulatorDialog(self):
@@ -196,7 +216,6 @@ class App(QMainWindow):
                 self.create_edge(vertex,neighbor,weight)
 
             hasImport = True
-            self.createdNodes += 1
   
     def open_file_name_dialog(self):
         options = QFileDialog.Options()
@@ -242,7 +261,27 @@ class App(QMainWindow):
         qp.drawLine(self.SourceEdgeDrawingVertex.vertexCenter, self.mouseTrackingPosition)
         self.update()
     '''
-        
+    def saveFile(self):
+        fileName, _ = QFileDialog.getSaveFileName(self,"Salvar Topologia","","All Files (*);;Text Files (*.txt)")
+        if fileName:
+            print(fileName)
+            self.fileName = fileName
+
+        if self.fileName!=None:
+            if('.txt' in self.fileName):
+                f = open(self.fileName, 'w')
+            else:
+                f = open(self.fileName + '.txt', 'w')
+            self.saveGraph(f)
+	
+
+    def saveGraph(self,f):
+       f.write(str(len(self.used_icon_vertexes))+ ' ' +str(len(self.used_label_edges))+'\n')
+       for e in self.used_label_edges:
+            f.write(str(e.u.idVertex) + " " + str(e.v.idVertex) + " " + str(e.w) + '\n')
+       f.close()
+
+    
     def drawEdges(self, qp):
         pen = QPen(Qt.black, 2, Qt.SolidLine)
         pen.setStyle(Qt.SolidLine)
