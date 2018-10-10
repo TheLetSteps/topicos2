@@ -34,15 +34,15 @@ class SimulatorDialog(QDialog):
         self.formGroupBox = QGroupBox("Solicitar Chamadas")
         layout = QFormLayout()
         
-        layout.addRow(QLabel("Nº de Chamadas:"), QLineEdit())
 
-        #self.countSimulationsField = QLineEdit()
-        #self.countSimulationsField.setValidator(QIntValidator(1, 10001))
+        self.countSimulationsField = QLineEdit()
+        self.countSimulationsField.setValidator(QIntValidator(1, 10001))
         
         #self.b1 = QCheckBox("Você tem certeza que deseja calcular?")
         #self.b1.setChecked(True)
-        
         #layout.addRow(self.b1)
+
+        layout.addRow(QLabel("Nº de Chamadas:"), self.countSimulationsField)
         
         self.formGroupBox.setLayout(layout)
         
@@ -85,9 +85,9 @@ class SimulatorDialog(QDialog):
             sources.append(None)
     
         now = datetime.datetime.now()
-        fileSimulationName = 'SimulaÃ§Ã£o - ' + now.strftime("%d-%m-%Y - %Hh%Mm%Ss")
+        fileSimulationName = 'resultados_simulacao_' + now.strftime("%d-%m-%Y-%H:%M")
         f = open(fileSimulationName + '.txt' ,'w')
-        f.write('Lambda: ' + str(self.index_to_vertex[0].parent().lambda_) + ' Numero de chamadas: ' + str(countSimulations) + '\n\n')
+        f.write('Numero de chamadas: ' + str(countSimulations) + '\n\n')
         leftSimulations = countSimulations
         
         while(leftSimulations):
@@ -103,29 +103,29 @@ class SimulatorDialog(QDialog):
             
             self.currentPath = []
     
-            f.write('SimulaÃ§Ã£o ' + str(countSimulations - leftSimulations + 1) + ':\n')
-            f.write('Origem: ' + str((self.index_to_vertex[s].idVertex, self.index_to_vertex[s].label.text())) + '\n')
-            f.write('Destino: ' + str((self.index_to_vertex[d].idVertex, self.index_to_vertex[d].label.text())) + '\n')
+            f.write('Simulacao ' + str(countSimulations - leftSimulations + 1) + ':\n')
+            f.write('Origem: ' + str((self.index_to_vertex[s].label.text())) + '\n')
+            f.write('Destino: ' + str((self.index_to_vertex[d].label.text())) + '\n')
             f.write('Caminho: ' + str(graph.path_to(d, sources[s], self.handleVertices)) + '\n')
-            f.write('DistÃ¢ncia: ' + str(sources[s][d].distance) + ' km\n')
+            f.write('Distancia: ' + str(sources[s][d].distance) + ' km\n'+'\n')
             
-            self.firstFit(f)
+            #self.firstFit(f)
             
             leftSimulations -= 1
             
         self.blockingProbability = self.lostCalls / countSimulations
-        f.write('Probabilidade de bloqueio (first fit): ' + str(self.blockingProbability))
+        #f.write('Probabilidade de bloqueio (first fit): ' + str(self.blockingProbability))
             
         f.close()
 
         try:
-            self.parentApp.showNewMessageDialog('Simulation file created successfully with name \"' + fileSimulationName + '\"')
+            self.parentApp.showNewMessageDialog('Arquivo do resultado da Simulação criado:  \"' + fileSimulationName + '\"')
         except:
             print('Something went wrong')
             
     def handleVertices(self, u):
         self.currentPath.append(u)
-        return str((self.index_to_vertex[u].idVertex, self.index_to_vertex[u].label.text()))
+        return str(self.index_to_vertex[u].label.text())
     
     def firstFit(self, f):
         index, used = self.channelToBeUsed()
@@ -178,7 +178,7 @@ class SimulatorDialog(QDialog):
         
     def acceptAct(self):
         self.accept()
-        self.simulate(self.b1.isChecked())
+        self.simulate(False)
         self.close()
         
         
@@ -189,7 +189,7 @@ class SimulatorWavelengthDialog(QDialog):
 
     def __init__(self, parentApp):
         super(SimulatorWavelengthDialog, self).__init__()
-        #file = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
+        file = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
         
         self.parentApp = parentApp
         self.move(500, 250)

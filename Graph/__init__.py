@@ -151,4 +151,4 @@ class Graph:
     def path_to(self, u, vertexes_list, handleVertice):
         if (vertexes_list[u].antecessor is None):
             return str(handleVertice(u))
-        return self.path_to(vertexes_list[u].antecessor, vertexes_list, handleVertice) + ' -- ' + str(handleVertice(u))
+        return self.path_to(vertexes_list[u].antecessor, vertexes_list, handleVertice) + ' ==> ' + str(handleVertice(u))
