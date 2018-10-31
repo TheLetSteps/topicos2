@@ -1,0 +1,6 @@
+
+\.idea/
+
+Graph/__pycache__/
+
+*.pyc
