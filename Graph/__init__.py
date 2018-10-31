@@ -110,6 +110,15 @@ class Graph:
         self.__adj_list[u] = [(_v, _w) for _v, _w in self.__adj_list[u] if _v != v]
         self.__adj_list[v] = [(_u, _w) for _u, _w in self.__adj_list[v] if _u != u]
 
+    def get_remove_edge(self, u, v):
+        self.__adj_list[u] = [(_v, _w) for _v, _w in self.__adj_list[u] if _v != v]
+        self.__adj_list[v] = [(_u, _w) for _u, _w in self.__adj_list[v] if _u != u]
+        peso = -1
+        for _u, _w in self.__adj_list[v]:
+            if _u != u:
+                peso+=_w
+        return peso
+
     def remove_arc(self, u, v):
         self.__adj_list[u] = [(_v, _w) for _v, _w in self.__adj_list[u] if _v != v]
 
@@ -152,3 +161,67 @@ class Graph:
         if (vertexes_list[u].antecessor is None):
             return str(handleVertice(u))
         return self.path_to(vertexes_list[u].antecessor, vertexes_list, handleVertice) + ' ==> ' + str(handleVertice(u))
+
+    def path(self, u, vertexes_list):
+        if (vertexes_list[u].antecessor is None):
+            return str(u)
+        return self.path(vertexes_list[u].antecessor, vertexes_list) + ' ' + str(u)
+    
+    def itemgetter(self, dict):
+        return dict['cost']
+
+    def ksp_yen(self, node_start, node_end, max_k=2):
+    
+        self.dijkstra_sssp(node_start)
+
+        #A = [{'cost': distances[node_end], 
+        #      'path': path(previous, node_start, node_end)}]
+        path = [int(x) for x in self.path(node_end, self.vertexes[node_start]).split(" ")]
+        A = [{
+            'cost': self.vertexes[node_start][node_end].distance,
+            'path': path
+            }]
+        B = []
+
+        if not A[0]['path']: return A
+        
+        for k in range(1, max_k):
+            for i in range(0, len(A[-1]['path']) - 1):
+                node_spur = A[-1]['path'][i]
+                path_root = A[-1]['path'][:i+1]
+
+                edges_removed = []
+                for path_k in A:
+                    curr_path = path_k['path']
+                    if len(curr_path) > i and path_root == curr_path[:i+1]:
+                        cost = self.get_remove_edge(curr_path[i], curr_path[i+1])
+                        if cost == -1:
+                            continue
+                        edges_removed.append([curr_path[i], curr_path[i+1], cost])
+
+                self.dijkstra_sssp(node_spur)
+                path = [int(x) for x in self.path(node_end, self.vertexes[node_start]).split(" ")]
+                path_spur = {
+                    'cost': self.vertexes[node_start][node_end].distance,
+                    'path': path
+                    }
+
+                if path_spur['path']:
+                    path_total = path_root[:-1] + path_spur['path']
+                    dist_total = self.vertexes[node_spur].distance + path_spur['cost']
+                    potential_k = {'cost': dist_total, 'path': path_total}
+
+                    if not (potential_k in B):
+                        B.append(potential_k)
+
+                for edge in edges_removed:
+                    self.insert_edge(edge[0], edge[1], edge[2])
+
+            if len(B):
+                B = sorted(B, key=self.itemgetter)
+                A.append(B[0])
+                B.pop(0)
+            else:
+                break
+
+        return A
