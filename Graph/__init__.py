@@ -170,21 +170,21 @@ class Graph:
     def itemgetter(self, dict):
         return dict['cost']
 
-    def ksp_yen(self, node_start, node_end, max_k=2):
+    def ksp_yen(self, node_start, node_end, vertexes_list, max_k=2):
     
         self.dijkstra_sssp(node_start)
 
-        #A = [{'cost': distances[node_end], 
-        #      'path': path(previous, node_start, node_end)}]
-        path = [int(x) for x in self.path(node_end, self.vertexes[node_start]).split(" ")]
+        path = self.path(node_end, vertexes_list)
+        path = [int(vertex) for vertex in path.split()]
+        
         A = [{
-            'cost': self.vertexes[node_start][node_end].distance,
-            'path': path
-            }]
+            'cost' : self.__vertexes[node_end].distance,
+            'path' : path
+        }]
         B = []
 
         if not A[0]['path']: return A
-        
+
         for k in range(1, max_k):
             for i in range(0, len(A[-1]['path']) - 1):
                 node_spur = A[-1]['path'][i]
@@ -200,9 +200,12 @@ class Graph:
                         edges_removed.append([curr_path[i], curr_path[i+1], cost])
 
                 self.dijkstra_sssp(node_spur)
-                path = [int(x) for x in self.path(node_end, self.vertexes[node_start]).split(" ")]
+                path = self.path(node_end, vertexes_list)
+                path = [int(vertex) for vertex in path.split()]
+                
                 path_spur = {
-                    'cost': self.vertexes[node_start][node_end].distance,
+                    #'cost': self.vertexes[node_start][node_end].distance,
+                    'cost': self.__vertexes[node_end].distance,
                     'path': path
                     }
 
@@ -223,5 +226,4 @@ class Graph:
                 B.pop(0)
             else:
                 break
-
         return A

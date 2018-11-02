@@ -97,7 +97,6 @@ class SimulatorDialog(QDialog):
             
             if(d == s):
                 continue
-
             s_d = (s,d)
             if s_d not in sorteados_s_d:
                 sorteados_s_d.append(s_d)
@@ -116,8 +115,8 @@ class SimulatorDialog(QDialog):
                 
                 #self.firstFit(f)
             else:
-                if(sources[s] is None):
-                    sources[s] = graph.ksp_yen(s, d, max_k=1)[0]['path']
+                #if(sources[s] is None):
+                sources[s] = graph.ksp_yen(s, d, sources[s])[0]['path']
                 
                 f.write('Simulacao ' + str(countSimulations - leftSimulations + 1) + ':\n')
                 f.write('Origem: ' + str((self.index_to_vertex[s].label.text())) + '\n')
@@ -125,7 +124,7 @@ class SimulatorDialog(QDialog):
                 f.write('Caminho: ' + str(graph.path_to(d, sources[s], self.handleVertices)) + '\n')
                 f.write('Distancia: ' + str(sources[s][d].distance) + ' km\n'+'\n')
                 
-                continue
+                #continue
                 
             leftSimulations -= 1
                 
