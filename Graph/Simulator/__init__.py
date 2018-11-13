@@ -81,6 +81,7 @@ class SimulatorDialog(QDialog):
             graph.insert_edge(u, v, edge.w)
     
         sources = []
+        rotas={}
         for i in range(self.n):
             sources.append(None)
     
@@ -96,40 +97,60 @@ class SimulatorDialog(QDialog):
             d = np.random.randint(0, self.n)
             
             if(d == s):
-                continue
+                continue   
+
             s_d = (s,d)
             if s_d not in sorteados_s_d:
                 sorteados_s_d.append(s_d)
-                
-                if(sources[s] is None):
-                    graph.dijkstra_sssp(s)
-                    sources[s] = graph.vertexes
-                
-                self.currentPath = []
+                rotas[s_d] = []           
+            
+            if(sources[s] is None):
+                graph.dijkstra_sssp(s)
+                sources[s] = graph.vertexes
+                rota = (graph.path(d, sources[s], self.handleVertices))
+            
+            if rota not in rotas[s_d]:
+                rotas[s_d] = rotas[s_d].append(rota)
+
+                self.currengtPath = []
         
                 f.write('Simulacao ' + str(countSimulations - leftSimulations + 1) + ':\n')
                 f.write('Origem: ' + str((self.index_to_vertex[s].label.text())) + '\n')
                 f.write('Destino: ' + str((self.index_to_vertex[d].label.text())) + '\n')
                 f.write('Caminho: ' + str(graph.path_to(d, sources[s], self.handleVertices)) + '\n')
                 f.write('Distancia: ' + str(sources[s][d].distance) + ' km\n'+'\n')
-                
+
                 #self.firstFit(f)
             else:
-                #if(sources[s] is None):
+             
                 sources[s] = graph.ksp_yen(s, d, sources[s])[0]['path']
-                
-                f.write('Simulacao ' + str(countSimulations - leftSimulations + 1) + ':\n')
-                f.write('Origem: ' + str((self.index_to_vertex[s].label.text())) + '\n')
-                f.write('Destino: ' + str((self.index_to_vertex[d].label.text())) + '\n')
-                f.write('Caminho: ' + str(graph.path_to(d, sources[s], self.handleVertices)) + '\n')
-                f.write('Distancia: ' + str(sources[s][d].distance) + ' km\n'+'\n')
-                
+                rota = graph.path_to(d, sources[s], self.handleVertices)
+            
+                if rota in rotas[s_d]:
+                    continue
+        
+                elif (len(rotas[s_d]) <= 3):
+                    
+                    f.write('Simulacao ' + str(countSimulations - leftSimulations + 1) + ':\n')
+                    f.write('Origem: ' + str((self.index_to_vertex[s].label.text())) + '\n')
+                    f.write('Destino: ' + str((self.index_to_vertex[d].label.text())) + '\n')
+                    f.write('Caminho: ' + str(graph.path_to(d, sources[s], self.handleVertices)) + '\n')
+                    f.write('Distancia: ' + str(sources[s][d].distance) + ' km\n'+'\n')
+                    rotas[s_d] = rotas[s_d].append(rota)
+
+                else:
+                    f.write('Simulacao ' + str(countSimulations - leftSimulations + 1) + ':\n')
+                    f.write('Origem: ' + str((self.index_to_vertex[s].label.text())) + '\n')
+                    f.write('Destino: ' + str((self.index_to_vertex[d].label.text())) + '\n')
+                    f.write('Bloqueio!\n\n')
+                    self.lostCalls += 1
+  
                 #continue
                 
             leftSimulations -= 1
                 
         self.blockingProbability = self.lostCalls / countSimulations
-        #f.write('Probabilidade de bloqueio (first fit): ' + str(self.blockingProbability))
+        f.write('Probabilidade de bloqueio: ' + str(self.blockingProbability))
             
         f.close()
 
