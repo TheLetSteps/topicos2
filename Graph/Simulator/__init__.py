@@ -107,7 +107,8 @@ class SimulatorDialog(QDialog):
             if(sources[s] is None):
                 graph.dijkstra_sssp(s)
                 sources[s] = graph.vertexes
-                rota = (graph.path(d, sources[s], self.handleVertices))
+                path = graph.path(d, sources[s])
+                rota = [int(vertex) for vertex in path.split()]
             
             if rota not in rotas[s_d]:
                 rotas[s_d] = rotas[s_d].append(rota)
@@ -124,7 +125,9 @@ class SimulatorDialog(QDialog):
             else:
              
                 sources[s] = graph.ksp_yen(s, d, sources[s])[0]['path']
-                rota = graph.path_to(d, sources[s], self.handleVertices)
+
+                path = graph.path(d, sources[s])
+                rota = [int(vertex) for vertex in path.split()]
             
                 if rota in rotas[s_d]:
                     continue
@@ -157,7 +160,8 @@ class SimulatorDialog(QDialog):
         try:
             self.parentApp.showNewMessageDialog('Arquivo do resultado da Simulação criado:  \"' + fileSimulationName + '\"')
         except:
-            print('Something went wrong')
+            self.parentApp.showNewMessageDialog('Something went wrong')
+
             
     def handleVertices(self, u):
         self.currentPath.append(u)
