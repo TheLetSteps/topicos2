@@ -107,10 +107,13 @@ class Graph:
         self.__adj_list[u].append((v, w))
 
     def remove_edge(self, u, v):
+
         self.__adj_list[u] = [(_v, _w) for _v, _w in self.__adj_list[u] if _v != v]
         self.__adj_list[v] = [(_u, _w) for _u, _w in self.__adj_list[v] if _u != u]
 
     def get_remove_edge(self, u, v):
+        print('Print:')
+        print(u,v)
         self.__adj_list[u] = [(_v, _w) for _v, _w in self.__adj_list[u] if _v != v]
         self.__adj_list[v] = [(_u, _w) for _u, _w in self.__adj_list[v] if _u != u]
         peso = -1
@@ -133,6 +136,8 @@ class Graph:
         for v in self.__vertexes:
             v.distance = Vertex.INF
             v.antecessor = None
+
+        print(source_vertex)
 
         self.__vertexes[source_vertex].distance = 0
         hp.heappush(pq, (0, source_vertex))
@@ -163,6 +168,7 @@ class Graph:
         return self.path_to(vertexes_list[u].antecessor, vertexes_list, handleVertice) + ' ==> ' + str(handleVertice(u))
 
     def path(self, u, vertexes_list):
+        print(f'u: {u}')
         if (vertexes_list[u].antecessor is None):
             return str(u)
         return self.path(vertexes_list[u].antecessor, vertexes_list) + ' ' + str(u)
@@ -170,12 +176,25 @@ class Graph:
     def itemgetter(self, dict):
         return dict['cost']
 
+    def path_of_vertexes(self, vertex_list):
+        path = ""
+        for vertex in vertex_list:
+            path += str(vertex.label) + ' '
+
+        path.rstrip()
+
+        return path
+
     def ksp_yen(self, node_start, node_end, vertexes_list, max_k=2):
     
         self.dijkstra_sssp(node_start)
 
-        path = self.path(node_end, vertexes_list)
-        path = [int(vertex) for vertex in path.split()]
+        print('VERTICES: ', len(vertexes_list))
+
+        #path = self.path_of_vertexes(vertexes_list)
+        print(node_end, len(self.__vertexes))
+        path = self.path(node_end, self.__vertexes)
+        path = [Vertex(vertex) for vertex in path.split()]
         
         A = [{
             'cost' : self.__vertexes[node_end].distance,
@@ -194,12 +213,12 @@ class Graph:
                 for path_k in A:
                     curr_path = path_k['path']
                     if len(curr_path) > i and path_root == curr_path[:i+1]:
-                        cost = self.get_remove_edge(curr_path[i], curr_path[i+1])
+                        cost = self.get_remove_edge(int(curr_path[i].label), int(curr_path[i+1].label))
                         if cost == -1:
                             continue
-                        edges_removed.append([curr_path[i], curr_path[i+1], cost])
+                        edges_removed.append([int(curr_path[i].label), int(curr_path[i+1].label), cost])
 
-                self.dijkstra_sssp(node_spur)
+                self.dijkstra_sssp(int(node_spur.label))
                 path = self.path(node_end, vertexes_list)
                 path = [int(vertex) for vertex in path.split()]
                 
@@ -211,7 +230,7 @@ class Graph:
 
                 if path_spur['path']:
                     path_total = path_root[:-1] + path_spur['path']
-                    dist_total = self.vertexes[node_spur].distance + path_spur['cost']
+                    dist_total = self.vertexes[int(node_spur.label)].distance + path_spur['cost']
                     potential_k = {'cost': dist_total, 'path': path_total}
 
                     if not (potential_k in B):
@@ -226,4 +245,5 @@ class Graph:
                 B.pop(0)
             else:
                 break
+        print('A: ',A)
         return A
