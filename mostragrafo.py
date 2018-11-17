@@ -189,6 +189,15 @@ class App(QMainWindow):
         if(aux[0]==0):
             self.create_vertex(random.randint(50,self.width-50),random.randint(50,self.height-50),aux[1],self.createdNodes)
 
+    def editVertex(self, vertex):
+        self.dialog = QVertex.VertexDialog(vertex.idVertex)
+        self.dialog.label.setText(vertex.label.text())
+        self.dialog.exec_()
+
+        if (self.dialog.status==0):
+            if (self.dialog.label.text()!=vertex.label.text()):
+                vertex.label.setText(self.dialog.label.text())
+
 
     def createVertexDialog(self, idField=None):
         self.dialog = QVertex.VertexDialog(idField)
@@ -200,6 +209,16 @@ class App(QMainWindow):
         
         return(l)
 
+    def editEdge(self):
+        self.dialog = QEdge.EdgeDialog(edge.pos())
+        self.dialog.label.setText(str(edge.w))
+        self.dialog.exec_()
+        
+        if (self.dialog.status==0):
+            if (ast.literal_eval(self.dialog.label.text())!=edge.w):
+                edge.w = ast.literal_eval(self.dialog.label.text())
+                edge.setText(str(edge.w) + ' Km')
+        
     def load_topology(self, fileName):
         global hasImport
         if not hasImport:
