@@ -1,7 +1,7 @@
 import datetime
 import numpy as np
 import Graph
-from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QGroupBox, QVBoxLayout, QFormLayout, QLineEdit, QLabel, QCheckBox
+from PyQt5.QtWidgets import QDialog, QFileDialog, QDialogButtonBox, QGroupBox, QVBoxLayout, QFormLayout, QLineEdit, QLabel, QCheckBox
 from PyQt5.QtGui import QIntValidator
 
 class SimulatorDialog(QDialog):
@@ -38,10 +38,13 @@ class SimulatorDialog(QDialog):
         self.countSimulationsField = QLineEdit()
         self.countSimulationsField.setValidator(QIntValidator(1, 10001))
         
-        #self.b1 = QCheckBox("Você tem certeza que deseja calcular?")
-        #self.b1.setChecked(True)
-        #layout.addRow(self.b1)
-
+        self.b1 = QCheckBox("Você tem certeza que deseja calcular?")
+        self.b2 = QCheckBox("Rodar First-Fit?")
+        self.b1.setChecked(True)
+        self.b2.setChecked(True)
+        
+        layout.addRow(self.b1)
+        layout.addRow(self.b2)
         layout.addRow(QLabel("Nº de Chamadas:"), self.countSimulationsField)
         
         self.formGroupBox.setLayout(layout)
@@ -87,7 +90,7 @@ class SimulatorDialog(QDialog):
         now = datetime.datetime.now()
         fileSimulationName = 'resultados_simulacao_' + now.strftime("%d-%m-%Y-%H:%M")
         f = open(fileSimulationName + '.txt' ,'w')
-        f.write('Numero de chamadas: ' + str(countSimulations) + '\n\n')
+        f.write('Lambda: ' + str(self.index_to_vertex[0].parent().lambda_) + ' Numero de chamadas: ' + str(countSimulations) + '\n\n')
         leftSimulations = countSimulations
         
         while(leftSimulations):
@@ -109,19 +112,19 @@ class SimulatorDialog(QDialog):
             f.write('Caminho: ' + str(graph.path_to(d, sources[s], self.handleVertices)) + '\n')
             f.write('Distancia: ' + str(sources[s][d].distance) + ' km\n'+'\n')
             
-            #self.firstFit(f)
+            self.firstFit(f)
             
             leftSimulations -= 1
             
         self.blockingProbability = self.lostCalls / countSimulations
-        #f.write('Probabilidade de bloqueio (first fit): ' + str(self.blockingProbability))
+        f.write('Probabilidade de bloqueio (first fit): ' + str(self.blockingProbability))
             
         f.close()
 
         try:
             self.parentApp.showNewMessageDialog('Arquivo do resultado da Simulação criado:  \"' + fileSimulationName + '\"')
         except:
-            print('Something went wrong')
+            self.parentApp.showNewMessageDialog('Something went wrong')
             
     def handleVertices(self, u):
         self.currentPath.append(u)
@@ -178,7 +181,8 @@ class SimulatorDialog(QDialog):
         
     def acceptAct(self):
         self.accept()
-        self.simulate(False)
+        if(self.b1.isChecked()):
+            self.simulate(self.b2.isChecked())
         self.close()
         
         
@@ -189,7 +193,7 @@ class SimulatorWavelengthDialog(QDialog):
 
     def __init__(self, parentApp):
         super(SimulatorWavelengthDialog, self).__init__()
-        file = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
+        #file = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
         
         self.parentApp = parentApp
         self.move(500, 250)
@@ -205,16 +209,16 @@ class SimulatorWavelengthDialog(QDialog):
         mainLayout.addWidget(self.buttonBox)
         self.setLayout(mainLayout)
 
-        self.setWindowTitle("Wavelength Setup")
+        self.setWindowTitle("Configuração de Comprimento de Onda")
 
     def createFormGroupBox(self):
-        self.formGroupBox = QGroupBox("Wavelength")
+        self.formGroupBox = QGroupBox("Comprimento de Onda")
         layout = QFormLayout()
         # teremos que gerar esses ids
         self.countLambdasField = QLineEdit(str(self.parentApp.lambda_ ))
         self.countLambdasField.setValidator(QIntValidator(1, 100))
 
-        layout.addRow(QLabel("Number of Lambdas"), self.countLambdasField)
+        layout.addRow(QLabel("Número de Lambdas"), self.countLambdasField)
         self.formGroupBox.setLayout(layout)
                
     def acceptAct(self):

@@ -47,8 +47,8 @@ class App(QMainWindow):
         self.title = 'Grafo'
         self.left = 100
         self.top = 100
-        self.width = 1500
-        self.height = 1100
+        self.width = 1600
+        self.height = 1000
         self.v = 0
         self.init_interface()
         
@@ -102,14 +102,17 @@ class App(QMainWindow):
         self.routeAct.setEnabled(True)
         self.routeAct.triggered.connect(self.showSimulatorDialog)
 
+        waveLentghAct = QAction(QIcon('Images/wave.png'), 'Configurar enlace', self)
+        waveLentghAct.triggered.connect(self.setWaveLength)
+        waveLentghAct.setEnabled(True)
+
         self.toolbar = self.addToolBar('Exit')
         self.toolbar.addAction(importAct)
         self.toolbar.addAction(nodeAct)
         self.toolbar.addAction(edgeAct)
         self.toolbar.addAction(self.routeAct)
         self.toolbar.addAction(saveAct)
-	
-
+        self.toolbar.addAction(waveLentghAct)
 
         self.show()
 
@@ -187,7 +190,7 @@ class App(QMainWindow):
     def create_vertex_toolbar(self, event):
         aux = self.createVertexDialog(self.createdNodes)
         if(aux[0]==0):
-            self.create_vertex(random.randint(0,self.width)-100,random.randint(0,self.height)-100,aux[1],self.createdNodes)
+            self.create_vertex(random.randint(50,self.width-50),random.randint(50,self.height-50),aux[1],self.createdNodes)
 
 
     def createVertexDialog(self, idField=None):
@@ -209,7 +212,7 @@ class App(QMainWindow):
             nVertex, nEdges = content[0].rstrip().split()
 
             for i in range(1,int(nVertex)+1):
-                self.create_vertex(random.randint(0,self.width)-100,random.randint(0,self.height)-100,str(i),str(i))
+                self.create_vertex(random.randint(50,self.width-50),random.randint(50,self.height-50),str(i),str(i))
 
             for j in range(1,int(nEdges)+1):
                 vertex,neighbor,weight = content[j].rstrip().split()
@@ -292,6 +295,12 @@ class App(QMainWindow):
             edge.updateCenterPosition()
             self.update()
 
+    def setWaveLength(self,event):
+        self.dialog = Simulator.SimulatorWavelengthDialog(self)
+        self.dialog.exec_()
+        if (int(self.dialog.countLambdasField.text())!=self.lambda_):
+            self.lambda_ = int(self.dialog.countLambdasField.text())
+        
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
