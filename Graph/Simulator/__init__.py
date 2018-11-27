@@ -156,19 +156,19 @@ class SimulatorDialog(QDialog):
                 u = self.index_to_vertex[self.currentPath[i-1]]
                 v = self.index_to_vertex[self.currentPath[i]]
                 self.links[u][v].channels |= (1 << index)
-            f.write(str(index) + '\n')
+            f.write(str(index+1) + '\n')
         else:
             self.lostCalls += 1
             f.write('Bloqueio!\n\n')
         
-        f.write('Canais ocupados no caminho: ' + str(self.usedChannels(used)) + '\n\n')
+        f.write('Canais ocupados no caminho até o momento: ' + str(self.usedChannels(used)) + '\n\n')
     
     def usedChannels(self, n):
         usedList = []
         
         while(n):
             x = n & -n
-            usedList.append(x.bit_length()-1)
+            usedList.append(x.bit_length())
             n -= x
             
         return usedList

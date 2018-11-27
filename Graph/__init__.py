@@ -168,7 +168,7 @@ class Graph:
         return self.path_to(vertexes_list[u].antecessor, vertexes_list, handleVertice) + ' ==> ' + str(handleVertice(u))
 
     def path(self, u, vertexes_list):
-        print(f'u: {u}')
+        #print(f'u: {u}')
         if (vertexes_list[u].antecessor is None):
             return str(u)
         return self.path(vertexes_list[u].antecessor, vertexes_list) + ' ' + str(u)
