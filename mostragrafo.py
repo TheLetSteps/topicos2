@@ -102,14 +102,17 @@ class App(QMainWindow):
         self.routeAct.setEnabled(True)
         self.routeAct.triggered.connect(self.showSimulatorDialog)
 
+        waveLentghAct = QAction(QIcon('Images/wave.png'), 'Configurar enlace', self)
+        waveLentghAct.triggered.connect(self.setWaveLength)
+        waveLentghAct.setEnabled(True)
+
         self.toolbar = self.addToolBar('Exit')
         self.toolbar.addAction(importAct)
         self.toolbar.addAction(nodeAct)
         self.toolbar.addAction(edgeAct)
         self.toolbar.addAction(self.routeAct)
         self.toolbar.addAction(saveAct)
-	
-
+        self.toolbar.addAction(waveLentghAct)
 
         self.show()
 
@@ -311,6 +314,12 @@ class App(QMainWindow):
             edge.updateCenterPosition()
             self.update()
 
+    def setWaveLength(self,event):
+        self.dialog = Simulator.SimulatorWavelengthDialog(self)
+        self.dialog.exec_()
+        if (int(self.dialog.countLambdasField.text())!=self.lambda_):
+            self.lambda_ = int(self.dialog.countLambdasField.text())
+        
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

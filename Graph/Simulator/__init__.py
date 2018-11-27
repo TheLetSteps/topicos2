@@ -1,7 +1,7 @@
 import datetime
 import numpy as np
 import Graph
-from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QGroupBox, QVBoxLayout, QFormLayout, QLineEdit, QLabel, QCheckBox
+from PyQt5.QtWidgets import QDialog, QFileDialog, QDialogButtonBox, QGroupBox, QVBoxLayout, QFormLayout, QLineEdit, QLabel, QCheckBox
 from PyQt5.QtGui import QIntValidator
 
 class SimulatorDialog(QDialog):
@@ -39,10 +39,13 @@ class SimulatorDialog(QDialog):
         self.countSimulationsField = QLineEdit()
         self.countSimulationsField.setValidator(QIntValidator(1, 10001))
         
-        #self.b1 = QCheckBox("Você tem certeza que deseja calcular?")
-        #self.b1.setChecked(True)
-        #layout.addRow(self.b1)
-
+        self.b1 = QCheckBox("Você tem certeza que deseja calcular?")
+        self.b2 = QCheckBox("Rodar First-Fit?")
+        self.b1.setChecked(True)
+        self.b2.setChecked(True)
+        
+        layout.addRow(self.b1)
+        layout.addRow(self.b2)
         layout.addRow(QLabel("Nº de Chamadas:"), self.countSimulationsField)
         
         self.formGroupBox.setLayout(layout)
@@ -89,7 +92,7 @@ class SimulatorDialog(QDialog):
         now = datetime.datetime.now()
         fileSimulationName = 'resultados_simulacao_' + now.strftime("%d-%m-%Y-%H:%M")
         f = open(fileSimulationName + '.txt' ,'w')
-        f.write('Numero de chamadas: ' + str(countSimulations) + '\n\n')
+        f.write('Lambda: ' + str(self.index_to_vertex[0].parent().lambda_) + ' Numero de chamadas: ' + str(countSimulations) + '\n\n')
         leftSimulations = countSimulations
         sorteados_s_d = []
 
@@ -116,59 +119,20 @@ class SimulatorDialog(QDialog):
                 path = graph.path(d, sources[s])
                 rota = [int(vertex) for vertex in path.split()]
             
-                if rota not in rotas[s_d]:
-                    #print('chegou aqui')
-                    rotas[s_d].append(rota)
-                    #print(rotas[s_d])
-
-                self.currentPath = []
-        
-                f.write('Simulacao ' + str(countSimulations - leftSimulations + 1) + ':\n')
-                f.write('Origem: ' + str((self.index_to_vertex[s].label.text())) + '\n')
-                f.write('Destino: ' + str((self.index_to_vertex[d].label.text())) + '\n')
-                f.write('Caminho: ' + str(graph.path_to(d, sources[s], self.handleVertices)) + '\n')
-                f.write('Distancia: ' + str(sources[s][d].distance) + ' km\n'+'\n')
-
-                #self.firstFit(f)
-            else:
-                yen_result = graph.ksp_yen(s, d, sources[s])[0]
-                sources[s], distance = yen_result['path'], yen_result['cost']
-
-                #print("syen = ",sources[s])
-
-                #path = graph.path(d, sources[s])
-                path = self.path_of_vertexes(sources[s]) 
-                rota = [int(vertex) for vertex in path.split()]
-                #print(f'ROTA: {rota}')
-                print(f'ROTA CRIADA: {rota}')
-                print(f'ROTAS: {rotas[s_d]}')
-                if rota in rotas[s_d]:
-                    continue
-        
-                elif (len(rotas[s_d]) <= 3):
-                    
-                    f.write('Simulacao ' + str(countSimulations - leftSimulations + 1) + ':\n')
-                    f.write('Origem: ' + str((self.index_to_vertex[s].label.text())) + '\n')
-                    f.write('Destino: ' + str((self.index_to_vertex[d].label.text())) + '\n')
-                    #f.write('Caminho: ' + str(graph.path_to(d, sources[s], self.handleVertices)) + '\n')
-                    f.write('Caminho: ' + path + '\n')
-                    #f.write('Distancia: ' + str(sources[s][d].distance) + ' km\n'+'\n')
-                    f.write('Distancia: ' + str(distance) + 'km\n' + '\n')
-                    rotas[s_d].append(rota)
-
-                else:
-                    f.write('Simulacao ' + str(countSimulations - leftSimulations + 1) + ':\n')
-                    f.write('Origem: ' + str((self.index_to_vertex[s].label.text())) + '\n')
-                    f.write('Destino: ' + str((self.index_to_vertex[d].label.text())) + '\n')
-                    f.write('Bloqueio!\n\n')
-                    self.lostCalls += 1
-  
-                #continue
-                
+            self.currentPath = []
+    
+            f.write('Simulacao ' + str(countSimulations - leftSimulations + 1) + ':\n')
+            f.write('Origem: ' + str((self.index_to_vertex[s].label.text())) + '\n')
+            f.write('Destino: ' + str((self.index_to_vertex[d].label.text())) + '\n')
+            f.write('Caminho: ' + str(graph.path_to(d, sources[s], self.handleVertices)) + '\n')
+            f.write('Distancia: ' + str(sources[s][d].distance) + ' km\n'+'\n')
+            
+            self.firstFit(f)
+            
             leftSimulations -= 1
                 
         self.blockingProbability = self.lostCalls / countSimulations
-        f.write('Probabilidade de bloqueio: ' + str(self.blockingProbability))
+        f.write('Probabilidade de bloqueio (first fit): ' + str(self.blockingProbability))
             
         f.close()
 
@@ -176,18 +140,6 @@ class SimulatorDialog(QDialog):
             self.parentApp.showNewMessageDialog('Arquivo do resultado da Simulação criado:  \"' + fileSimulationName + '\"')
         except:
             self.parentApp.showNewMessageDialog('Something went wrong')
-
-    def path_of_vertexes(self, vertex_list):
-        path = ""
-        print(vertex_list)
-        for vertex in vertex_list:
-            path += vertex.label + ' '
-
-        path.rstrip()
-
-        return path
-
-
             
     def handleVertices(self, u):
         self.currentPath.append(u)
@@ -244,7 +196,8 @@ class SimulatorDialog(QDialog):
         
     def acceptAct(self):
         self.accept()
-        self.simulate(False)
+        if(self.b1.isChecked()):
+            self.simulate(self.b2.isChecked())
         self.close()
         
         
@@ -255,7 +208,7 @@ class SimulatorWavelengthDialog(QDialog):
 
     def __init__(self, parentApp):
         super(SimulatorWavelengthDialog, self).__init__()
-        file = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
+        #file = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
         
         self.parentApp = parentApp
         self.move(500, 250)
@@ -271,16 +224,16 @@ class SimulatorWavelengthDialog(QDialog):
         mainLayout.addWidget(self.buttonBox)
         self.setLayout(mainLayout)
 
-        self.setWindowTitle("Wavelength Setup")
+        self.setWindowTitle("Configuração de Comprimento de Onda")
 
     def createFormGroupBox(self):
-        self.formGroupBox = QGroupBox("Wavelength")
+        self.formGroupBox = QGroupBox("Comprimento de Onda")
         layout = QFormLayout()
         # teremos que gerar esses ids
         self.countLambdasField = QLineEdit(str(self.parentApp.lambda_ ))
         self.countLambdasField.setValidator(QIntValidator(1, 100))
 
-        layout.addRow(QLabel("Number of Lambdas"), self.countLambdasField)
+        layout.addRow(QLabel("Número de Lambdas"), self.countLambdasField)
         self.formGroupBox.setLayout(layout)
                
     def acceptAct(self):
