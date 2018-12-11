@@ -4,6 +4,7 @@ import Graph
 from PyQt5.QtWidgets import QDialog, QFileDialog, QDialogButtonBox, QGroupBox, QVBoxLayout, QFormLayout, QLineEdit, QLabel, QCheckBox
 from PyQt5.QtGui import QIntValidator
 
+TIME_DURATION = timedelta(milliseconds=10)
 
 class SimulatorDialog(QDialog):
     NumGridRows = 3
@@ -54,8 +55,7 @@ class SimulatorDialog(QDialog):
     def simulate(self, firstFit):
         
         countSimulations = int(self.countSimulationsField.text())
-        duration_time = timedelta(milliseconds=1*int(self.countLambdasField))
-        
+
         if countSimulations < 1:
             return
         
@@ -181,13 +181,17 @@ class SimulatorDialog(QDialog):
         pathLength = len(self.currentPath)
         lambda_ = self.index_to_vertex[0].parent().lambda_
         used = 0
+        count = 1
         
         for i in range(1, pathLength):
             u = self.index_to_vertex[self.currentPath[i-1]]
             v = self.index_to_vertex[self.currentPath[i]]
             link = self.links[u][v]
             used |= link.channels
-            
+            print(used)
+        if used == 1023 and count < 2:
+            used = 0
+            count +=1
             
         x = used^(used+1)
         
