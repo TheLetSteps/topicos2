@@ -1,6 +1,7 @@
 from enum import Enum
 import copy
 import heapq as hp
+
 try:
   from enum import auto
 except ImportError: 
@@ -10,7 +11,6 @@ except ImportError:
     i = __my_enum_auto_id
     __my_enum_auto_id += 1
     return i
-
 
 class Color(Enum):
     WHITE = auto()

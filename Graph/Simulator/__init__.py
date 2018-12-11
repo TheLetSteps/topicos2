@@ -1,8 +1,9 @@
-import datetime
+from datetime import datetime, timedelta
 import numpy as np
 import Graph
 from PyQt5.QtWidgets import QDialog, QFileDialog, QDialogButtonBox, QGroupBox, QVBoxLayout, QFormLayout, QLineEdit, QLabel, QCheckBox
 from PyQt5.QtGui import QIntValidator
+
 
 class SimulatorDialog(QDialog):
     NumGridRows = 3
@@ -53,7 +54,8 @@ class SimulatorDialog(QDialog):
     def simulate(self, firstFit):
         
         countSimulations = int(self.countSimulationsField.text())
-
+        duration_time = timedelta(milliseconds=1*int(self.countLambdasField))
+        
         if countSimulations < 1:
             return
         
@@ -89,7 +91,7 @@ class SimulatorDialog(QDialog):
         for i in range(self.n):
             sources.append(None)
     
-        now = datetime.datetime.now()
+        now = datetime.now()
         fileSimulationName = 'resultados_simulacao_' + now.strftime("%d-%m-%Y-%H:%M")
         f = open(fileSimulationName + '.txt' ,'w')
         f.write('Lambda: ' + str(self.index_to_vertex[0].parent().lambda_) + ' Numero de chamadas: ' + str(countSimulations) + '\n\n')
@@ -157,6 +159,7 @@ class SimulatorDialog(QDialog):
                 v = self.index_to_vertex[self.currentPath[i]]
                 self.links[u][v].channels |= (1 << index)
             f.write(str(index+1) + '\n')
+
         else:
             self.lostCalls += 1
             f.write('Bloqueio!\n\n')
@@ -231,7 +234,7 @@ class SimulatorWavelengthDialog(QDialog):
         layout = QFormLayout()
         # teremos que gerar esses ids
         self.countLambdasField = QLineEdit(str(self.parentApp.lambda_ ))
-        self.countLambdasField.setValidator(QIntValidator(1, 100))
+        self.countLambdasField.setValidator(QIntValidator(1, 100000))
 
         layout.addRow(QLabel("Número de Lambdas"), self.countLambdasField)
         self.formGroupBox.setLayout(layout)
