@@ -41,13 +41,13 @@ class SimulatorDialog(QDialog):
         self.countSimulationsField = QLineEdit()
         self.countSimulationsField.setValidator(QIntValidator(1, 10001))
         
-        self.b1 = QCheckBox("Você tem certeza que deseja calcular?")
-        self.b2 = QCheckBox("Rodar First-Fit?")
-        self.b1.setChecked(True)
-        self.b2.setChecked(True)
+        #self.b1 = QCheckBox("Você tem certeza que deseja calcular?")
+        #self.b2 = QCheckBox("Rodar First-Fit?")
+        #self.b1.setChecked(True)
+        #self.b2.setChecked(True)
         
-        layout.addRow(self.b1)
-        layout.addRow(self.b2)
+        #layout.addRow(self.b1)
+        #layout.addRow(self.b2)
         layout.addRow(QLabel("Nº de Chamadas:"), self.countSimulationsField)
         
         self.formGroupBox.setLayout(layout)
@@ -203,8 +203,9 @@ class SimulatorDialog(QDialog):
         
     def acceptAct(self):
         self.accept()
-        if(self.b1.isChecked()):
-            self.simulate(self.b2.isChecked())
+        #if(self.b1.isChecked()):
+        self.simulate(True)
+            #self.simulate(self.b2.isChecked())
         self.close()
         
         
