@@ -233,7 +233,7 @@ class App(QMainWindow):
             for i in range(1,int(nVertex)+1):
                 self.create_vertex(random.randint(50,self.width-50),random.randint(50,self.height-50),str(i),str(i))
 
-            for j in range(1,int(nEdges)+1):
+            for j in range(1,int(nEdges)):
                 vertex,neighbor,weight = content[j].rstrip().split()
                 self.create_edge(vertex,neighbor,weight)
 
