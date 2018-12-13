@@ -146,6 +146,9 @@ class SimulatorDialog(QDialog):
     def handleVertices(self, u):
         self.currentPath.append(u)
         return str(self.index_to_vertex[u].label.text())
+
+    def turnOffBit(self,n,k):
+        return (n & ~(1 << (k - 1)))
     
     def firstFit(self, f):
         index, used = self.channelToBeUsed()
